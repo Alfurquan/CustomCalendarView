@@ -8,19 +8,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.customcalendar.R;
 import com.example.customcalendar.adapter.CalendarGridAdapter;
 import com.example.customcalendar.interfaces.OnDateSelectedListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
 
 public class MonthFragment extends Fragment {
 
@@ -28,9 +33,14 @@ public class MonthFragment extends Fragment {
     Calendar displayedMonth;
     GridView calendarGrid;
     CalendarGridAdapter calendarGridAdapter;
+    TextView currentMonthText;
+    ViewPager calendarPager;
+    ImageView next,prev;
     static ArrayList<Date> selectedDates = new ArrayList<>();
     public static OnDateSelectedListener onDateSelectedListener;
     private static final int MAX_CALENDAR_COLUMN = 42;
+    private SimpleDateFormat formatter = new SimpleDateFormat("MMMM yyyy", Locale.ENGLISH);
+
 
     public MonthFragment() {
     }
@@ -51,8 +61,13 @@ public class MonthFragment extends Fragment {
 
         view = inflater.inflate(R.layout.calendar_layout,container,false);
         calendarGrid = view.findViewById(R.id.calendar_grid);
+        currentMonthText = view.findViewById(R.id.currentMonth);
+        calendarPager = getActivity().findViewById(R.id.calendarPager);
+        next = view.findViewById(R.id.nextButton);
+        prev = view.findViewById(R.id.prevButton);
         setUpAdapter();
         setGridCellClicks();
+        setClickListeners();
         return view;
     }
 
@@ -85,13 +100,34 @@ public class MonthFragment extends Fragment {
             dayValueInCells.add(mCal.getTime());
             mCal.add(Calendar.DAY_OF_MONTH, 1);
         }
-
+        updateTitle();
         calendarGridAdapter = new CalendarGridAdapter(getActivity(), dayValueInCells, displayedMonth,selectedDates);
         calendarGrid.setAdapter(calendarGridAdapter);
     }
 
     public  Calendar getDisplayedMonth(){
         return displayedMonth;
+    }
+    private void updateTitle() {
+        String sDate = formatter.format(displayedMonth.getTime());
+        currentMonthText.setText(sDate);
+    }
+
+    private void setClickListeners() {
+        prev.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                calendarPager.setCurrentItem(calendarPager.getCurrentItem()-1,true);
+                updateTitle();
+            }
+        });
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                calendarPager.setCurrentItem(calendarPager.getCurrentItem()+1,true);
+                updateTitle();
+            }
+        });
     }
 
 

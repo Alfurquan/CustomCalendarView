@@ -26,11 +26,9 @@ public class CustomCalendar extends LinearLayout {
     private ViewPager calendarPager;
     MonthFragment [] fragList = new MonthFragment[3];
     CalendarPagerAdapter calendarPagerAdapter;
-    TextView currentMonthText;
-    ImageView next,prev;
-    OnDateSelectedListener onDateSelectedListener;
+
+
     private Calendar currentMonth = Calendar.getInstance(Locale.ENGLISH);
-    private SimpleDateFormat formatter = new SimpleDateFormat("MMMM yyyy", Locale.ENGLISH);
     int focusPage;
 
     public CustomCalendar(Context context) {
@@ -41,7 +39,6 @@ public class CustomCalendar extends LinearLayout {
         super(context, attrs);
         this.context = context;
         initializeUI();
-        setClickListeners();
     }
 
 
@@ -55,9 +52,7 @@ public class CustomCalendar extends LinearLayout {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.calendar_view, this);
         calendarPager = view.findViewById(R.id.calendarPager);
-        currentMonthText = view.findViewById(R.id.currentMonth);
-        next = view.findViewById(R.id.nextButton);
-        prev = view.findViewById(R.id.prevButton);
+
         Calendar prevMonth = Calendar.getInstance();
         Calendar nextMonth = Calendar.getInstance();
         prevMonth.setTime(currentMonth.getTime());
@@ -80,7 +75,6 @@ public class CustomCalendar extends LinearLayout {
             public void onPageSelected(int position) {
 
                 focusPage = position;
-                updateTitle();
             }
 
             @Override
@@ -101,27 +95,7 @@ public class CustomCalendar extends LinearLayout {
 
     }
 
-    private void updateTitle() {
-        String sDate = formatter.format(currentMonth.getTime());
-        currentMonthText.setText(sDate);
-    }
 
-    private void setClickListeners() {
-        prev.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                calendarPager.setCurrentItem(calendarPager.getCurrentItem()-1,true);
-                updateTitle();
-            }
-        });
-        next.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                calendarPager.setCurrentItem(calendarPager.getCurrentItem()+1,true);
-                updateTitle();
-            }
-        });
-    }
 
     public void setOnDateSelectedListener(OnDateSelectedListener onDateSelectedListener){
        MonthFragment.onDateSelectedListener = onDateSelectedListener;

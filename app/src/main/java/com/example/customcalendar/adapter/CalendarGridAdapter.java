@@ -58,7 +58,8 @@ public class CalendarGridAdapter extends ArrayAdapter {
             cellNumber.setTextColor(context.getResources().getColor(R.color.grey));
         }
         if(selectedDates.contains(mDate)){
-            view.setBackgroundColor(context.getResources().getColor(R.color.colorAccent));
+            cellNumber.setBackgroundColor(context.getResources().getColor(R.color.colorAccent));
+            cellNumber.setTextColor(context.getResources().getColor(R.color.white));
         }
 
         return view;
