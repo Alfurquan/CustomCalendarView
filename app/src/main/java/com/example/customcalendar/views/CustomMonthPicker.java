@@ -90,7 +90,8 @@ public class CustomMonthPicker extends LinearLayout {
         nextYears = calendarManager.getYearList(nextYearCalendar);
         Log.d("msgNext", String.valueOf(nextYears));
         fragList[2] = YearFragment.newInstance(nextYears);
-        yearPagerAdapter = new YearPagerAdapter(((AppCompatActivity)getContext()).getSupportFragmentManager(),context,fragList);
+        Activity activity = getActivityFromContext(getContext());
+        yearPagerAdapter = new YearPagerAdapter(((AppCompatActivity)activity).getSupportFragmentManager(),context,fragList);
         viewPager.setAdapter(yearPagerAdapter);
         viewPager.setCurrentItem(1,false);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -135,14 +136,14 @@ public class CustomMonthPicker extends LinearLayout {
     }
 
     //will try this
-//    @Nullable
-//    public static Activity getActivityFromContext(@NonNull Context context){
-//        while (context instanceof ContextWrapper) {
-//            if (context instanceof Activity) return (Activity) context;
-//            context = ((ContextWrapper)context).getBaseContext();
-//        }
-//        return null; //we failed miserably
-//    }
+    @Nullable
+    public Activity getActivityFromContext(@NonNull Context context){
+        while (context instanceof ContextWrapper) {
+            if (context instanceof Activity) return (Activity) context;
+            context = ((ContextWrapper)context).getBaseContext();
+        }
+        return null; //we failed miserably
+    }
 
     private void setClickListeners() {
         nextButton.setOnClickListener(new OnClickListener() {
