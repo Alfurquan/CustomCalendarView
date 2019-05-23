@@ -1,18 +1,16 @@
-package com.example.customcalendar;
+package com.example.customcalendar.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
+import com.example.customcalendar.R;
 import com.example.customcalendar.adapter.CalendarPagerAdapter;
 import com.example.customcalendar.fragments.MonthFragment;
 import com.example.customcalendar.interfaces.OnDateSelectedListener;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -25,7 +23,7 @@ public class CustomCalendar extends LinearLayout {
     private Context context;
     private ViewPager calendarPager;
     MonthFragment [] fragList = new MonthFragment[3];
-    CalendarPagerAdapter calendarPagerAdapter;
+    public CalendarPagerAdapter calendarPagerAdapter;
 
 
     private Calendar currentMonth = Calendar.getInstance(Locale.ENGLISH);

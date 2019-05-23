@@ -11,8 +11,10 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.customcalendar.MainActivity;
 import com.example.customcalendar.R;
 import com.example.customcalendar.adapter.CalendarGridAdapter;
+import com.example.customcalendar.adapter.CalendarPagerAdapter;
 import com.example.customcalendar.interfaces.OnDateSelectedListener;
 
 import java.text.SimpleDateFormat;
@@ -36,6 +38,7 @@ public class MonthFragment extends Fragment {
     TextView currentMonthText;
     ViewPager calendarPager;
     ImageView next,prev;
+    CalendarPagerAdapter calendarPagerAdapter;
     static ArrayList<Date> selectedDates = new ArrayList<>();
     public static OnDateSelectedListener onDateSelectedListener;
     private static final int MAX_CALENDAR_COLUMN = 42;
@@ -65,6 +68,7 @@ public class MonthFragment extends Fragment {
         calendarPager = getActivity().findViewById(R.id.calendarPager);
         next = view.findViewById(R.id.nextButton);
         prev = view.findViewById(R.id.prevButton);
+        calendarPagerAdapter = (CalendarPagerAdapter) calendarPager.getAdapter();
         setUpAdapter();
         setGridCellClicks();
         setClickListeners();
@@ -128,8 +132,14 @@ public class MonthFragment extends Fragment {
                 updateTitle();
             }
         });
+
+
+        currentMonthText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                displayedMonth.add(Calendar.YEAR,1);
+                calendarPagerAdapter.setCalendar(displayedMonth);
+            }
+        });
     }
-
-
-
 }

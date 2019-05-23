@@ -9,7 +9,7 @@
     tools:context=".MainActivity">
 
 
-    <com.example.customcalendar.CustomCalendar
+    <com.example.customcalendar.views.CustomCalendar
         android:id="@+id/customCalendarView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
