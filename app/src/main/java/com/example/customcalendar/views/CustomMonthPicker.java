@@ -134,7 +134,7 @@ public class CustomMonthPicker extends LinearLayout {
         }
     }
 
-    //will try this 
+    //will try this
 //    @Nullable
 //    public static Activity getActivityFromContext(@NonNull Context context){
 //        while (context instanceof ContextWrapper) {
