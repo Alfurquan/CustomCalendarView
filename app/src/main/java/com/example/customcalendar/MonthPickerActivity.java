@@ -4,8 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 
@@ -25,7 +28,7 @@ public class MonthPickerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_month_picker);
         btn = findViewById(R.id.clickToOpn);
-        customMonthPicker = findViewById(R.id.customMonthPicker1);
+//        customMonthPickerstomMonthPicker = findViewById(R.id.customMonthPicker1);
 //        customMonthPicker.setOnMonthSelectedListener(new OnMonthSelectedListener() {
 //            @Override
 //            public void onSelectedMonth(int month) {
@@ -43,22 +46,32 @@ public class MonthPickerActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CustomMonthAndYearPickerDialog dialog = new CustomMonthAndYearPickerDialog(MonthPickerActivity.this);
-                dialog.setOnMonthSelectedListener(new OnMonthSelectedListener() {
-                    @Override
-                    public void onSelectedMonth(int month) {
-                        Log.d("msgMonth", String.valueOf(month));
-                    }
-                });
 
-                dialog.setOnYearSelectedListener(new OnYearSelectedListener() {
-                    @Override
-                    public void onYearSelected(int year) {
-                        Log.d("msgYear", String.valueOf(year));
-
-                    }
-                });
+                AlertDialog.Builder builder = new AlertDialog.Builder(MonthPickerActivity.this);
+                LayoutInflater inflater = getLayoutInflater();
+                View view1 = inflater.inflate(R.layout.custom_date_picker,null);
+                builder.setView(view1);
+                AlertDialog dialog = builder.create();
                 dialog.show();
+
+
+
+//                CustomMonthAndYearPickerDialog dialog = new CustomMonthAndYearPickerDialog(MonthPickerActivity.this);
+//                dialog.setOnMonthSelectedListener(new OnMonthSelectedListener() {
+//                    @Override
+//                    public void onSelectedMonth(int month) {
+//                        Log.d("msgMonth", String.valueOf(month));
+//                    }
+//                });
+//
+//                dialog.setOnYearSelectedListener(new OnYearSelectedListener() {
+//                    @Override
+//                    public void onYearSelected(int year) {
+//                        Log.d("msgYear", String.valueOf(year));
+//
+//                    }
+//                });
+//                dialog.show();
             }
         });
 

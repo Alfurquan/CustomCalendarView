@@ -70,59 +70,58 @@ public class CustomMonthPicker extends LinearLayout {
     private void initializeUI() {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.calendar_month_picker, this);
-        viewPager = view.findViewById(R.id.yearPager);
+//        viewPager = view.findViewById(R.id.yearPager);
         monthView = view.findViewById(R.id.monthGrid);
         nextButton = view.findViewById(R.id.nextButton);
         prevButton = view.findViewById(R.id.prevButton);
         months = new ArrayList<>();
         calendarManager = new CalendarManager(context);
         setUpMonthGrid();
-        Calendar prevYearCalendar = Calendar.getInstance();
-        Calendar nextYearCalendar = Calendar.getInstance();
-        nextYearCalendar.add(Calendar.YEAR,12);
-        prevYearCalendar.add(Calendar.YEAR,-12);
-        currentYears = calendarManager.getYearList(currentYear);
-        Log.d("msgCur", String.valueOf(currentYears));
-        fragList[1] = YearFragment.newInstance(currentYears);
-        prevYears = calendarManager.getYearList(prevYearCalendar);
-        Log.d("msgPrev", String.valueOf(prevYears));
-        fragList[0] = YearFragment.newInstance(prevYears);
-        nextYears = calendarManager.getYearList(nextYearCalendar);
-        Log.d("msgNext", String.valueOf(nextYears));
-        fragList[2] = YearFragment.newInstance(nextYears);
-        Activity activity = getActivityFromContext(getContext());
-        yearPagerAdapter = new YearPagerAdapter(((AppCompatActivity)activity).getSupportFragmentManager(),context,fragList);
-        viewPager.setAdapter(yearPagerAdapter);
-        viewPager.setCurrentItem(1,false);
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-
-                focusPage = position;
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-                if(state == ViewPager.SCROLL_STATE_IDLE){
-                    if(focusPage < 1){
-                          currentYear.add(Calendar.YEAR,-12);
-
-                    }else if(focusPage > 1){
-
-                        currentYear.add(Calendar.YEAR,12);
-                    }
-                    yearPagerAdapter.setYears(currentYear);
-                    viewPager.setCurrentItem(1,false);
-
-                }
-
-            }
-        });
+//        Calendar prevYearCalendar = Calendar.getInstance();
+//        Calendar nextYearCalendar = Calendar.getInstance();
+//        nextYearCalendar.add(Calendar.YEAR,12);
+//        prevYearCalendar.add(Calendar.YEAR,-12);
+//        currentYears = calendarManager.getYearList(currentYear);
+//        Log.d("msgCur", String.valueOf(currentYears));
+//        fragList[1] = YearFragment.newInstance(currentYears);
+//        prevYears = calendarManager.getYearList(prevYearCalendar);
+//        Log.d("msgPrev", String.valueOf(prevYears));
+//        fragList[0] = YearFragment.newInstance(prevYears);
+//        nextYears = calendarManager.getYearList(nextYearCalendar);
+//        Log.d("msgNext", String.valueOf(nextYears));
+//        fragList[2] = YearFragment.newInstance(nextYears);
+//        yearPagerAdapter = new YearPagerAdapter(((AppCompatActivity)getContext()).getSupportFragmentManager(),context,fragList);
+//        viewPager.setAdapter(yearPagerAdapter);
+//        viewPager.setCurrentItem(1,false);
+//        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+//            @Override
+//            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+//
+//            }
+//
+//            @Override
+//            public void onPageSelected(int position) {
+//
+//                focusPage = position;
+//            }
+//
+//            @Override
+//            public void onPageScrollStateChanged(int state) {
+//                if(state == ViewPager.SCROLL_STATE_IDLE){
+//                    if(focusPage < 1){
+//                          currentYear.add(Calendar.YEAR,-12);
+//
+//                    }else if(focusPage > 1){
+//
+//                        currentYear.add(Calendar.YEAR,12);
+//                    }
+//                    yearPagerAdapter.setYears(currentYear);
+//                    viewPager.setCurrentItem(1,false);
+//
+//                }
+//
+//            }
+//        });
 
     }
 
@@ -146,18 +145,18 @@ public class CustomMonthPicker extends LinearLayout {
     }
 
     private void setClickListeners() {
-        nextButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                viewPager.setCurrentItem(viewPager.getCurrentItem() + 1,true);
-            }
-        });
-        prevButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                viewPager.setCurrentItem(viewPager.getCurrentItem() - 1,true);
-            }
-        });
+//        nextButton.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                viewPager.setCurrentItem(viewPager.getCurrentItem() + 1,true);
+//            }
+//        });
+//        prevButton.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                viewPager.setCurrentItem(viewPager.getCurrentItem() - 1,true);
+//            }
+//        });
     }
 
     private void setUpMonthGridClicks() {

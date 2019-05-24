@@ -78,10 +78,10 @@
                 android:layout_gravity="center"
                 android:src="@drawable/ic_keyboard_arrow_up_black_24dp"/>
 
-           <com.example.customcalendar.views.CustomViewPager
-               android:id="@+id/yearPager"
-               android:layout_width="match_parent"
-               android:layout_height="150sp"/>
+           <!--<com.example.customcalendar.views.CustomViewPager-->
+               <!--android:id="@+id/yearPager"-->
+               <!--android:layout_width="match_parent"-->
+               <!--android:layout_height="150sp"/>-->
             <ImageView
                 android:id="@+id/nextButton"
                 android:layout_width="30sp"

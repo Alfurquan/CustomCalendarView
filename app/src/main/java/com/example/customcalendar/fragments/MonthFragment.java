@@ -16,6 +16,9 @@ import com.example.customcalendar.R;
 import com.example.customcalendar.adapter.CalendarGridAdapter;
 import com.example.customcalendar.adapter.CalendarPagerAdapter;
 import com.example.customcalendar.interfaces.OnDateSelectedListener;
+import com.example.customcalendar.interfaces.OnMonthSelectedListener;
+import com.example.customcalendar.interfaces.OnYearSelectedListener;
+import com.example.customcalendar.views.CustomMonthAndYearPickerDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,6 +30,7 @@ import java.util.Locale;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
 public class MonthFragment extends Fragment {
@@ -39,6 +43,7 @@ public class MonthFragment extends Fragment {
     ViewPager calendarPager;
     ImageView next,prev;
     CalendarPagerAdapter calendarPagerAdapter;
+    int selectedYear,selectedMonth;
     static ArrayList<Date> selectedDates = new ArrayList<>();
     public static OnDateSelectedListener onDateSelectedListener;
     private static final int MAX_CALENDAR_COLUMN = 42;
@@ -137,9 +142,40 @@ public class MonthFragment extends Fragment {
         currentMonthText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                displayedMonth.add(Calendar.YEAR,1);
-                calendarPagerAdapter.setCalendar(displayedMonth);
+                CustomMonthAndYearPickerDialog dialog = new CustomMonthAndYearPickerDialog();
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                Fragment prev = getActivity().getSupportFragmentManager().findFragmentByTag("dialog");
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
+                dialog.show(ft, "dialog");
+
+                dialog.setOnMonthSelectedListener(new OnMonthSelectedListener() {
+                    @Override
+                    public void onSelectedMonth(int month) {
+                        selectedMonth = month;
+                        Log.d("msgMonth", String.valueOf(month));
+                    }
+                });
+
+                dialog.setOnYearSelectedListener(new OnYearSelectedListener() {
+                    @Override
+                    public void onYearSelected(int year) {
+                        selectedYear = selectedYear;
+                        Log.d("msgYear", String.valueOf(year));
+                    }
+                });
+
+                goToMonthAndYear(selectedMonth,selectedYear);
             }
         });
+    }
+
+    private void goToMonthAndYear(int selectedMonth, int selectedYear) {
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(selectedYear,selectedMonth,1);
+        calendarPagerAdapter.setCalendar(calendar);
     }
 }

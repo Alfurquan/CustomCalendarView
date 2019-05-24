@@ -43,10 +43,57 @@
     android:background="@color/grey"/>
     </LinearLayout>
 
-    <com.example.customcalendar.views.CustomMonthPicker
-        android:id="@+id/customMonthPicker1"
+    <LinearLayout
+        android:orientation="horizontal"
+        android:weightSum="1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0sp"
+            android:layout_weight="0.5"
+            android:layout_height="wrap_content">
+
+            <GridView
+                android:id="@+id/monthGrid"
+                android:paddingTop="25sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:numColumns="2"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0sp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5">
+
+            <ImageView
+                android:id="@+id/prevButton"
+                android:layout_width="30sp"
+                android:layout_height="30sp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_keyboard_arrow_up_black_24dp"/>
+
+            <com.example.customcalendar.views.CustomViewPager
+            android:id="@+id/yearPager"
+            android:layout_width="match_parent"
+            android:layout_height="150sp"/>
+
+            <ImageView
+                android:id="@+id/nextButton"
+                android:layout_width="30sp"
+                android:layout_height="30sp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_keyboard_arrow_down_black_24dp"/>
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
 
     <LinearLayout
     android:orientation="horizontal"
