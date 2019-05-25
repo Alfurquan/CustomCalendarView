@@ -45,7 +45,7 @@ public class MonthFragment extends Fragment {
     ViewPager calendarPager;
     ImageView next,prev;
     CalendarPagerAdapter calendarPagerAdapter;
-    static ArrayList<Date> selectedDates = new ArrayList<>();
+    public static ArrayList<Date> selectedDates = new ArrayList<>();
     public static OnDateSelectedListener onDateSelectedListener;
     private static final int MAX_CALENDAR_COLUMN = 42;
     private SimpleDateFormat formatter = new SimpleDateFormat("MMMM yyyy", Locale.ENGLISH);
@@ -88,7 +88,7 @@ public class MonthFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 Date sel = calendarGridAdapter.getItem(position);
                 selectedDates.add(sel);
-                onDateSelectedListener.onSelectedDate(selectedDates);
+//                onDateSelectedListener.onSelectedDate(selectedDates);
                 setUpAdapter();
 
             }

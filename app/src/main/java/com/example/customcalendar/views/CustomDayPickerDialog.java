@@ -4,13 +4,16 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.example.customcalendar.R;
 import com.example.customcalendar.adapter.CalendarPagerAdapter;
 import com.example.customcalendar.fragments.MonthFragment;
 import com.example.customcalendar.interfaces.OnDateSelectedListener;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 import androidx.annotation.NonNull;
@@ -24,7 +27,7 @@ public class CustomDayPickerDialog extends DialogFragment {
     private ViewPager calendarPager;
     MonthFragment[] fragList = new MonthFragment[3];
     public CalendarPagerAdapter calendarPagerAdapter;
-
+    Button btnDone,btnCancel;
 
     private Calendar currentMonth = Calendar.getInstance(Locale.ENGLISH);
     int focusPage;
@@ -36,11 +39,14 @@ public class CustomDayPickerDialog extends DialogFragment {
 
         view = inflater.inflate(R.layout.custom_calendar_dialog,container,false);
         initialization();
+        setClickListeners();
         return view;
     }
 
     private void initialization() {
         calendarPager = view.findViewById(R.id.calendarPager);
+        btnDone = view.findViewById(R.id.btnDone1);
+        btnCancel = view.findViewById(R.id.btnCancel1);
         Calendar prevMonth = Calendar.getInstance();
         Calendar nextMonth = Calendar.getInstance();
         prevMonth.setTime(currentMonth.getTime());
@@ -81,6 +87,25 @@ public class CustomDayPickerDialog extends DialogFragment {
             }
         });
 
+    }
+
+    private void setClickListeners(){
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
+            }
+        });
+
+        btnDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ArrayList<Date> selectedDates = MonthFragment.selectedDates;
+                MonthFragment.onDateSelectedListener.onSelectedDate(selectedDates);
+                dismiss();
+            }
+        });
     }
 
     public void setOnDateSelectedListener(OnDateSelectedListener onDateSelectedListener){
