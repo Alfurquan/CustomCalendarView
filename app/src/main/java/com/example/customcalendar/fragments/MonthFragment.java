@@ -1,6 +1,7 @@
 package com.example.customcalendar.fragments;
 
 import android.annotation.SuppressLint;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import com.example.customcalendar.R;
 import com.example.customcalendar.adapter.CalendarGridAdapter;
 import com.example.customcalendar.adapter.CalendarPagerAdapter;
 import com.example.customcalendar.interfaces.OnDateSelectedListener;
+import com.example.customcalendar.interfaces.OnMonthAndYearSelectedListener;
 import com.example.customcalendar.interfaces.OnMonthSelectedListener;
 import com.example.customcalendar.interfaces.OnYearSelectedListener;
 import com.example.customcalendar.views.CustomMonthAndYearPickerDialog;
@@ -151,31 +153,23 @@ public class MonthFragment extends Fragment {
                 ft.addToBackStack(null);
                 dialog.show(ft, "dialog");
 
-                dialog.setOnMonthSelectedListener(new OnMonthSelectedListener() {
+
+                dialog.setOnMonthAndYearSelectedListener(new OnMonthAndYearSelectedListener() {
                     @Override
-                    public void onSelectedMonth(int month) {
-                        selectedMonth = month;
-                        Log.d("msgMonth", String.valueOf(month));
+                    public void onMonthAndYearSelected(int month, int year) {
+                        Log.d("msgMy", String.valueOf(month));
+                        Log.d("msgMy", String.valueOf(year));
+                        goToMonthAndYear(month,year);
                     }
                 });
-
-                dialog.setOnYearSelectedListener(new OnYearSelectedListener() {
-                    @Override
-                    public void onYearSelected(int year) {
-                        selectedYear = selectedYear;
-                        Log.d("msgYear", String.valueOf(year));
-                    }
-                });
-
-                goToMonthAndYear(selectedMonth,selectedYear);
             }
         });
     }
 
     private void goToMonthAndYear(int selectedMonth, int selectedYear) {
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(selectedYear,selectedMonth,1);
-        calendarPagerAdapter.setCalendar(calendar);
+        displayedMonth.set(Calendar.MONTH,selectedMonth);
+        displayedMonth.set(Calendar.YEAR,selectedYear);
+        calendarPagerAdapter.setCalendar(displayedMonth);
     }
 }

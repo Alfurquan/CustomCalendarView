@@ -1,7 +1,7 @@
 package com.example.customcalendar.views;
 
-import android.app.Dialog;
-import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.customcalendar.ManagerClasses.CalendarManager;
 import com.example.customcalendar.R;
@@ -18,6 +19,7 @@ import com.example.customcalendar.adapter.MonthGridAdapter;
 import com.example.customcalendar.adapter.YearPagerAdapter;
 import com.example.customcalendar.fragments.MonthFragment;
 import com.example.customcalendar.fragments.YearFragment;
+import com.example.customcalendar.interfaces.OnMonthAndYearSelectedListener;
 import com.example.customcalendar.interfaces.OnMonthSelectedListener;
 import com.example.customcalendar.interfaces.OnYearSelectedListener;
 
@@ -29,6 +31,8 @@ import java.util.Locale;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
 public class CustomMonthAndYearPickerDialog extends DialogFragment {
@@ -39,23 +43,24 @@ public class CustomMonthAndYearPickerDialog extends DialogFragment {
    private MonthGridAdapter monthGridAdapter;
    private GridView monthGrid;
    private YearFragment[] fragList = new YearFragment[3];
-    List<Integer> months;
+   private List<Integer> months;
    private Button btnDone,btnCancel;
    private OnMonthSelectedListener onMonthSelectedListener;
+   private OnMonthAndYearSelectedListener onMonthAndYearSelectedListener;
    private View view;
-    ArrayList<Integer> currentYears,prevYears,nextYears;
-    Calendar currentYear = Calendar.getInstance(Locale.ENGLISH);
-    int currentMonth;
-    int selectedMonth;
-    int focusPage;
+   private ArrayList<Integer> currentYears,prevYears,nextYears;
+   private Calendar currentYear = Calendar.getInstance(Locale.ENGLISH);
+   private int currentMonth,focusPage,selectedMonth;
     private ImageView nextButton,prevButton;
     private CalendarManager calendarManager;
+    private TextView monthName,yearName;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.custom_month_dialog,container,false);
+        getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         initialization();
         setUpMonthGridAdapter();
         setUpViewPager();
@@ -71,6 +76,8 @@ public class CustomMonthAndYearPickerDialog extends DialogFragment {
         prevButton = view.findViewById(R.id.prevButton);
         months = new ArrayList<>();
         calendarManager = new CalendarManager(getActivity());
+        monthName = view.findViewById(R.id.monthName);
+        yearName = view.findViewById(R.id.yearName);
         setUpMonthGrid();
         setOnClickListeners();
         setUpMonthGridClicks();
@@ -135,6 +142,7 @@ public class CustomMonthAndYearPickerDialog extends DialogFragment {
             }
         });
     }
+
         private void setUpMonthGridClicks() {
 
             monthGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -142,7 +150,17 @@ public class CustomMonthAndYearPickerDialog extends DialogFragment {
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                     int month = monthGridAdapter.getItem(position);
                     selectedMonth = month;
+                    monthName.setText(calendarManager.getMonthForInt(month));
                     setUpMonthGridAdapter();
+                }
+            });
+
+
+            setOnYearSelectedListener(new OnYearSelectedListener() {
+                @Override
+                public void onYearSelected(int year) {
+                    yearName.setText(String.valueOf(year));
+
                 }
             });
         }
@@ -172,12 +190,35 @@ public class CustomMonthAndYearPickerDialog extends DialogFragment {
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onMonthSelectedListener.onSelectedMonth(selectedMonth);
                 int selectedYear = YearFragment.selectedYear;
-                YearFragment.onYearSelectedListener.onYearSelected(selectedYear);
+                onMonthAndYearSelectedListener.onMonthAndYearSelected(selectedMonth,selectedYear);
                 dismiss();
             }
         });
+
+        monthName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+           //     replaceDialogFragment();
+            }
+        });
+    }
+
+    private void replaceDialogFragment() {
+        closeDialogFragment();
+        SampleDialog sampleDialog = new SampleDialog();
+        sampleDialog.show(getActivity().getSupportFragmentManager(),"dialog");
+    }
+
+    private void closeDialogFragment() {
+
+        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        Fragment fragmentToRemove = getActivity().getSupportFragmentManager().findFragmentByTag("dialog");
+        if (fragmentToRemove != null) {
+            ft.remove(fragmentToRemove);
+        }
+        ft.addToBackStack(null);
+        ft.commit(); //
     }
 
     public void setOnMonthSelectedListener(OnMonthSelectedListener onMonthSelectedListener){
@@ -188,4 +229,7 @@ public class CustomMonthAndYearPickerDialog extends DialogFragment {
         YearFragment.onYearSelectedListener = onYearSelectedListener;
     }
 
+    public void setOnMonthAndYearSelectedListener(OnMonthAndYearSelectedListener onMonthAndYearSelectedListener) {
+        this.onMonthAndYearSelectedListener = onMonthAndYearSelectedListener;
+    }
 }

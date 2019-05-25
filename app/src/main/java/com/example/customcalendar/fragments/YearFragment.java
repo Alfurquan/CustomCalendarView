@@ -75,6 +75,8 @@ public class YearFragment extends Fragment {
         });
     }
 
+
+
     public void updateUI(ArrayList<Integer> yearList){
         this.yearList = yearList;
         setUpYearGridAdapter();
