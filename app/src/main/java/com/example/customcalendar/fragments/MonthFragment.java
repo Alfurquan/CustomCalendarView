@@ -45,7 +45,6 @@ public class MonthFragment extends Fragment {
     ViewPager calendarPager;
     ImageView next,prev;
     CalendarPagerAdapter calendarPagerAdapter;
-    int selectedYear,selectedMonth;
     static ArrayList<Date> selectedDates = new ArrayList<>();
     public static OnDateSelectedListener onDateSelectedListener;
     private static final int MAX_CALENDAR_COLUMN = 42;
@@ -72,7 +71,7 @@ public class MonthFragment extends Fragment {
         view = inflater.inflate(R.layout.calendar_layout,container,false);
         calendarGrid = view.findViewById(R.id.calendar_grid);
         currentMonthText = view.findViewById(R.id.currentMonth);
-        calendarPager = getActivity().findViewById(R.id.calendarPager);
+        calendarPager = (ViewPager) container;
         next = view.findViewById(R.id.nextButton);
         prev = view.findViewById(R.id.prevButton);
         calendarPagerAdapter = (CalendarPagerAdapter) calendarPager.getAdapter();
@@ -147,9 +146,9 @@ public class MonthFragment extends Fragment {
                 CustomMonthAndYearPickerDialog dialog = new CustomMonthAndYearPickerDialog();
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                 Fragment prev = getActivity().getSupportFragmentManager().findFragmentByTag("dialog");
-                if (prev != null) {
-                    ft.remove(prev);
-                }
+//                if (prev != null) {
+//                    ft.remove(prev);
+//                }
                 ft.addToBackStack(null);
                 dialog.show(ft, "dialog");
 
