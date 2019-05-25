@@ -2,9 +2,12 @@ package com.example.customcalendar.ManagerClasses;
 
 import android.content.Context;
 
+import java.text.DateFormat;
 import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class CalendarManager {
 
@@ -92,5 +95,10 @@ public class CalendarManager {
            years.add(year);
         }
         return years;
+    }
+
+    public String convertDateToString(Date date){
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+        return df.format(date);
     }
 }

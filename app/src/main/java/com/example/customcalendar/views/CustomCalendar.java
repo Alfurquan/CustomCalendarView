@@ -11,7 +11,9 @@ import com.example.customcalendar.adapter.CalendarPagerAdapter;
 import com.example.customcalendar.fragments.MonthFragment;
 import com.example.customcalendar.interfaces.OnDateSelectedListener;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 import androidx.annotation.Nullable;
@@ -23,6 +25,7 @@ public class CustomCalendar extends LinearLayout {
     private Context context;
     private ViewPager calendarPager;
     MonthFragment [] fragList = new MonthFragment[3];
+    boolean shouldDecorate;
     public CalendarPagerAdapter calendarPagerAdapter;
 
 
@@ -41,7 +44,6 @@ public class CustomCalendar extends LinearLayout {
 
 
 
-
     public CustomCalendar(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
@@ -51,12 +53,28 @@ public class CustomCalendar extends LinearLayout {
         View view = inflater.inflate(R.layout.calendar_view, this);
         calendarPager = view.findViewById(R.id.calendarPager);
 
+    }
+
+    public void shouldDecorateWithDots(boolean shouldDecorate){
+        this.shouldDecorate = shouldDecorate;
+        setUpViewPager();
+    }
+
+    public void shouldDecorateWithDots(boolean shouldDecorate,ArrayList<Date> decoratedDates){
+        this.shouldDecorate = shouldDecorate;
+        MonthFragment.decoratedDates = decoratedDates;
+        setUpViewPager();
+    }
+
+    private void setUpViewPager() {
+
         Calendar prevMonth = Calendar.getInstance();
         Calendar nextMonth = Calendar.getInstance();
         prevMonth.setTime(currentMonth.getTime());
         nextMonth.setTime(currentMonth.getTime());
         prevMonth.add(Calendar.MONTH,-1);
         nextMonth.add(Calendar.MONTH,1);
+        MonthFragment.shouldDecorate = shouldDecorate;
         fragList[0] = MonthFragment.newInstance(prevMonth);
         fragList[1] = MonthFragment.newInstance(currentMonth);
         fragList[2] = MonthFragment.newInstance(nextMonth);

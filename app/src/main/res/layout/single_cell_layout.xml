@@ -13,4 +13,11 @@
         android:layout_gravity="center"
         android:text="12"/>
 
+    <ImageView
+        android:id="@+id/dots"
+        android:layout_width="5sp"
+        android:layout_height="5sp"
+        android:src="@drawable/circle_dots"
+        android:layout_gravity="center" />
+
 </LinearLayout>

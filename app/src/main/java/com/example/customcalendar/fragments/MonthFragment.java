@@ -46,8 +46,10 @@ public class MonthFragment extends Fragment {
     ImageView next,prev;
     CalendarPagerAdapter calendarPagerAdapter;
     public static ArrayList<Date> selectedDates = new ArrayList<>();
+    public static ArrayList<Date> decoratedDates = new ArrayList<>();
     public static OnDateSelectedListener onDateSelectedListener;
     private static final int MAX_CALENDAR_COLUMN = 42;
+    public static boolean shouldDecorate;
     private SimpleDateFormat formatter = new SimpleDateFormat("MMMM yyyy", Locale.ENGLISH);
 
 
@@ -111,7 +113,7 @@ public class MonthFragment extends Fragment {
             mCal.add(Calendar.DAY_OF_MONTH, 1);
         }
         updateTitle();
-        calendarGridAdapter = new CalendarGridAdapter(getActivity(), dayValueInCells, displayedMonth,selectedDates);
+        calendarGridAdapter = new CalendarGridAdapter(getActivity(), dayValueInCells, displayedMonth,selectedDates,shouldDecorate,decoratedDates);
         calendarGrid.setAdapter(calendarGridAdapter);
     }
 
