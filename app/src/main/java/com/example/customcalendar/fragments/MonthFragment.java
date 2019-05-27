@@ -45,10 +45,10 @@ public class MonthFragment extends Fragment {
     ViewPager calendarPager;
     ImageView next,prev;
     CalendarPagerAdapter calendarPagerAdapter;
-    public static ArrayList<Date> selectedDates = new ArrayList<>();
+    private ArrayList<Date> selectedDates = new ArrayList<>();
     public static ArrayList<Date> decoratedDates = new ArrayList<>();
-    public static OnDateSelectedListener onDateSelectedListener;
-    private static final int MAX_CALENDAR_COLUMN = 42;
+    private  OnDateSelectedListener onDateSelectedListener;
+    private  final int MAX_CALENDAR_COLUMN = 42;
     public static boolean shouldDecorate;
     private SimpleDateFormat formatter = new SimpleDateFormat("MMMM yyyy", Locale.ENGLISH);
 
@@ -90,7 +90,7 @@ public class MonthFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 Date sel = calendarGridAdapter.getItem(position);
                 selectedDates.add(sel);
-//                onDateSelectedListener.onSelectedDate(selectedDates);
+                onDateSelectedListener.onSelectedDate(selectedDates);
                 setUpAdapter();
 
             }
@@ -172,5 +172,21 @@ public class MonthFragment extends Fragment {
         displayedMonth.set(Calendar.MONTH,selectedMonth);
         displayedMonth.set(Calendar.YEAR,selectedYear);
         calendarPagerAdapter.setCalendar(displayedMonth);
+    }
+
+    public void setOnDateSelectedListener(OnDateSelectedListener onDateSelectedListener) {
+        this.onDateSelectedListener = onDateSelectedListener;
+    }
+
+    public OnDateSelectedListener getOnDateSelectedListener() {
+        return onDateSelectedListener;
+    }
+
+    public void setSelectedDates(ArrayList<Date> selectedDates) {
+        this.selectedDates = selectedDates;
+    }
+
+    public ArrayList<Date> getSelectedDates() {
+        return selectedDates;
     }
 }

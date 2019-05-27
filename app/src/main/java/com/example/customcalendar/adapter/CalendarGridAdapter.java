@@ -56,10 +56,11 @@ public class CalendarGridAdapter extends ArrayAdapter {
         int displayYear = dateCal.get(Calendar.YEAR);
         int currentMonth = currentDate.get(Calendar.MONTH) + 1;
         int currentYear = currentDate.get(Calendar.YEAR);
-
-        for(Date date:decoratedDates){
-            String selected = calendarManager.convertDateToString(date);
-            decorDates.add(selected);
+        if(shouldDecorate){
+            for(Date date:decoratedDates){
+                String selected = calendarManager.convertDateToString(date);
+                decorDates.add(selected);
+            }
         }
         View view = convertView;
         if(view == null){

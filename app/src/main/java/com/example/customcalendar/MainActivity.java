@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
             decoratedDates.add(calendar.getTime());
             i--;
         }
-        customCalendar.shouldDecorateWithDots(true,decoratedDates);
+        customCalendar.shouldDecorateWithDots(false,null);
         customCalendar.setOnDateSelectedListener(new OnDateSelectedListener() {
             @Override
             public void onSelectedDate(ArrayList<Date> selectedDates) {

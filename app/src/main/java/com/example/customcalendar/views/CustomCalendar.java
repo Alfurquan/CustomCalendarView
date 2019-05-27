@@ -114,6 +114,8 @@ public class CustomCalendar extends LinearLayout {
 
 
     public void setOnDateSelectedListener(OnDateSelectedListener onDateSelectedListener){
-       MonthFragment.onDateSelectedListener = onDateSelectedListener;
+       fragList[0].setOnDateSelectedListener(onDateSelectedListener);
+       fragList[1].setOnDateSelectedListener(onDateSelectedListener);
+       fragList[2].setOnDateSelectedListener(onDateSelectedListener);
     }
 }

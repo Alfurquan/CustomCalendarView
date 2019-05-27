@@ -48,6 +48,7 @@ public class MonthPickerActivity extends AppCompatActivity {
                 }
                 ft.addToBackStack(null);
                 dialog.show(ft, "dialog");
+                dialog.setMode("single");
 
                 dialog.setOnDateSelectedListener(new OnDateSelectedListener() {
                     @Override

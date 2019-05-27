@@ -31,6 +31,7 @@ public class CustomDayPickerDialog extends DialogFragment {
 
     private Calendar currentMonth = Calendar.getInstance(Locale.ENGLISH);
     int focusPage;
+    private String mode;
 
 
     @Nullable
@@ -47,6 +48,16 @@ public class CustomDayPickerDialog extends DialogFragment {
         calendarPager = view.findViewById(R.id.calendarPager);
         btnDone = view.findViewById(R.id.btnDone1);
         btnCancel = view.findViewById(R.id.btnCancel1);
+        setUpViewPager();
+    }
+
+    public void setMode(String mode) {
+        this.mode = mode;
+//        setUpViewPager();
+        initialiseFragments();
+    }
+
+    private void initialiseFragments(){
         Calendar prevMonth = Calendar.getInstance();
         Calendar nextMonth = Calendar.getInstance();
         prevMonth.setTime(currentMonth.getTime());
@@ -56,6 +67,9 @@ public class CustomDayPickerDialog extends DialogFragment {
         fragList[0] = MonthFragment.newInstance(prevMonth);
         fragList[1] = MonthFragment.newInstance(currentMonth);
         fragList[2] = MonthFragment.newInstance(nextMonth);
+    }
+    private void setUpViewPager(){
+
         calendarPagerAdapter = new CalendarPagerAdapter(getChildFragmentManager(),getActivity(),fragList);
         calendarPager.setAdapter(calendarPagerAdapter);
         calendarPager.setCurrentItem(1,false);
@@ -101,15 +115,23 @@ public class CustomDayPickerDialog extends DialogFragment {
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ArrayList<Date> selectedDates = MonthFragment.selectedDates;
-                MonthFragment.onDateSelectedListener.onSelectedDate(selectedDates);
+                ArrayList<Date> selectedDates1 = fragList[0].getSelectedDates();
+                ArrayList<Date> selectedDates2 = fragList[1].getSelectedDates();
+                ArrayList<Date> selectedDates3 = fragList[2].getSelectedDates();
+            //    fragList[0].getOnDateSelectedListener().onSelectedDate(selectedDates1);
+                fragList[1].getOnDateSelectedListener().onSelectedDate(selectedDates2);
+           //     fragList[2].getOnDateSelectedListener().onSelectedDate(selectedDates3);
                 dismiss();
             }
         });
     }
 
     public void setOnDateSelectedListener(OnDateSelectedListener onDateSelectedListener){
-        MonthFragment.onDateSelectedListener = onDateSelectedListener;
+        if(fragList[0] !=null && fragList[1] != null && fragList[2] != null){
+            fragList[0].setOnDateSelectedListener(onDateSelectedListener);
+            fragList[1].setOnDateSelectedListener(onDateSelectedListener);
+            fragList[2].setOnDateSelectedListener(onDateSelectedListener);
+        }
     }
 }
 
