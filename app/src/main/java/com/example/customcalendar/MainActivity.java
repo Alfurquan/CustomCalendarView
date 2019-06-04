@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.example.customcalendar.interfaces.OnDateSelectedListener;
 import com.example.customcalendar.views.CustomCalendar;
+import com.example.customcalendar.views.CustomCalendarView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -19,25 +20,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        CustomCalendar customCalendar = findViewById(R.id.customCalendarView);
-        Calendar calendar = Calendar.getInstance();
-        decoratedDates.add(calendar.getTime());
-
-        int i = 7;
-        while(i > 0){
-            calendar.add(Calendar.MONTH,1);
-            decoratedDates.add(calendar.getTime());
-            i--;
-        }
-        customCalendar.shouldDecorateWithDots(false,null);
-        customCalendar.setOnDateSelectedListener(new OnDateSelectedListener() {
-            @Override
-            public void onSelectedDate(ArrayList<Date> selectedDates) {
-                for(Date date:selectedDates){
-                    Log.d("msg", String.valueOf(date));
-                }
-            }
-        });
+        CustomCalendarView customCalendarView = findViewById(R.id.customCalendar);
+        customCalendarView.shouldDecorate(false);
 
 
     }

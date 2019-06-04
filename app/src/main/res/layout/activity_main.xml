@@ -12,8 +12,13 @@
     <com.example.customcalendar.views.CustomCalendar
         android:id="@+id/customCalendarView"
         android:layout_width="match_parent"
+        android:visibility="gone"
         android:layout_height="wrap_content"/>
 
+    <com.example.customcalendar.views.CustomCalendarView
+        android:id="@+id/customCalendar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
 
 </LinearLayout>

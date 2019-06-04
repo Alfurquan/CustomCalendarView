@@ -12,6 +12,7 @@ import java.util.Date;
 public class CalendarManager {
 
     private Context context;
+    public int pos;
 
     public CalendarManager(Context context) {
         this.context = context;
@@ -96,9 +97,30 @@ public class CalendarManager {
         }
         return years;
     }
+    public Date getCurrentDateAsDate(){
+        Calendar calendar = Calendar.getInstance();
+        return calendar.getTime();
+    }
 
     public String convertDateToString(Date date){
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         return df.format(date);
+    }
+    public ArrayList<Calendar> getAllMonthList(){
+
+        ArrayList<Calendar> monthList = new ArrayList<>();
+        Calendar calendar = Calendar.getInstance();
+        Calendar current = (Calendar) calendar.clone();
+        calendar.set(1970,0,1);
+        while(calendar.get(Calendar.YEAR ) != 2100){
+            monthList.add(calendar);
+            if(calendar.get(Calendar.YEAR) == current.get(Calendar.YEAR) && calendar.get(Calendar.MONTH) == current.get(Calendar.MONTH)){
+                pos = monthList.indexOf(calendar);
+            }
+            calendar.add(Calendar.MONTH,1);
+            calendar = (Calendar) calendar.clone();
+        }
+
+        return monthList;
     }
 }

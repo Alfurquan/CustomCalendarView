@@ -80,6 +80,7 @@ public class CustomCalendar extends LinearLayout {
         fragList[2] = MonthFragment.newInstance(nextMonth);
         calendarPagerAdapter = new CalendarPagerAdapter(((AppCompatActivity)getContext()).getSupportFragmentManager(),context,fragList);
         calendarPager.setAdapter(calendarPagerAdapter);
+        calendarPager.setOffscreenPageLimit(3);
         calendarPager.setCurrentItem(1,false);
         calendarPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

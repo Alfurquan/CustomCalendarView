@@ -71,6 +71,7 @@ public class MonthFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.calendar_layout,container,false);
+        Log.d("Msg","oncreateview");
         calendarGrid = view.findViewById(R.id.calendar_grid);
         currentMonthText = view.findViewById(R.id.currentMonth);
         calendarPager = (ViewPager) container;
@@ -106,9 +107,11 @@ public class MonthFragment extends Fragment {
         List<Date> dayValueInCells = new ArrayList<Date>();
         Calendar mCal = (Calendar)displayedMonth.clone();
         mCal.set(Calendar.DAY_OF_MONTH, 1);
+        int myMonth = mCal.get(Calendar.MONTH);
+        Log.d("Msg", String.valueOf(mCal.get(Calendar.DAY_OF_WEEK)));
         int firstDayOfTheMonth = mCal.get(Calendar.DAY_OF_WEEK) - 1;
         mCal.add(Calendar.DAY_OF_MONTH, -firstDayOfTheMonth);
-        while(dayValueInCells.size() < MAX_CALENDAR_COLUMN){
+        while(dayValueInCells.size() < 42){
             dayValueInCells.add(mCal.getTime());
             mCal.add(Calendar.DAY_OF_MONTH, 1);
         }
@@ -188,5 +191,11 @@ public class MonthFragment extends Fragment {
 
     public ArrayList<Date> getSelectedDates() {
         return selectedDates;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d("Msg","ondestroyview");
     }
 }
