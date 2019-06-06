@@ -28,6 +28,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SnapHelper;
 
 public class CalendarRecyclerAdapter extends RecyclerView.Adapter<CalendarRecyclerAdapter.MyCalendarViewHolder> {
 
@@ -42,9 +43,10 @@ public class CalendarRecyclerAdapter extends RecyclerView.Adapter<CalendarRecycl
     private ArrayList<Date> dayValueInCells;
     private CalendarManager calendarManager;
     private OnDateSelectedListener onDateSelectedListener;
+    private SnapHelper snapHelper;
 
 
-    public CalendarRecyclerAdapter(Context context, ArrayList<Calendar> months,ArrayList<Date> selectedDates,boolean shouldDecorate,ArrayList<Date> decoratedDates,RecyclerView recyclerView) {
+    public CalendarRecyclerAdapter(Context context, ArrayList<Calendar> months, ArrayList<Date> selectedDates, boolean shouldDecorate, ArrayList<Date> decoratedDates, RecyclerView recyclerView, SnapHelper snapHelper) {
         this.context = context;
         this.months = months;
         this.selectedDates = selectedDates;
@@ -53,6 +55,7 @@ public class CalendarRecyclerAdapter extends RecyclerView.Adapter<CalendarRecycl
         this.recyclerView = recyclerView;
         dayValueInCells = new ArrayList<>();
         calendarManager = new CalendarManager(context);
+        this.snapHelper = snapHelper;
     }
 
 
@@ -65,9 +68,9 @@ public class CalendarRecyclerAdapter extends RecyclerView.Adapter<CalendarRecycl
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyCalendarViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final MyCalendarViewHolder holder, int position) {
 
-        Calendar displayedMonth = months.get(position);
+        final Calendar displayedMonth = months.get(position);
         String sDate = formatter.format(displayedMonth.getTime());
         holder.currentMonthTextView.setText(sDate);
 
@@ -75,6 +78,24 @@ public class CalendarRecyclerAdapter extends RecyclerView.Adapter<CalendarRecycl
         setUpGridAdapter(calendar,holder);
         setUpClicks(holder,position,displayedMonth);
         setUpGridClicks(calendar,holder);
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if(newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    View centerView = snapHelper.findSnapView(recyclerView.getLayoutManager());
+                    TextView st = centerView.findViewById(R.id.currentMonth);
+                    st.setTextColor(context.getResources().getColor(R.color.colorAccent));
+                    GridView gridView = centerView.findViewById(R.id.calendar_grid);
+                    Calendar calendar = (Calendar) displayedMonth.clone();
+                    dayValueInCells = calendarManager.getAllDateValuesInAMonth(displayedMonth);
+                    adapter = new CalendarGridAdapter(context,dayValueInCells,calendar,selectedDates,shouldDecorate,decoratedDates);
+                   gridView.setAdapter(adapter);
+                }
+            }
+        });
     }
 
     private void setUpGridClicks(final Calendar displayedMonth, final MyCalendarViewHolder holder) {
@@ -82,7 +103,6 @@ public class CalendarRecyclerAdapter extends RecyclerView.Adapter<CalendarRecycl
         holder.calendarGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                notifyDataSetChanged();
                 Date sel = adapter.getItem(position);
                 selectedDates.add(sel);
                 if(onDateSelectedListener!=null)

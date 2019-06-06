@@ -2,9 +2,11 @@ package com.example.customcalendar.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.example.customcalendar.ManagerClasses.CalendarManager;
 import com.example.customcalendar.R;
@@ -64,13 +66,15 @@ public class CustomCalendarView extends LinearLayout {
 
         months = calendarManager.getAllMonthList();
         int pos = calendarManager.pos;
-        LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         monthRecycler.setLayoutManager(layoutManager);
         layoutManager.scrollToPositionWithOffset(pos,0);
-        adapter = new CalendarRecyclerAdapter(context,months,selectedDates,shouldDecorate,decoratedDates,monthRecycler);
-        monthRecycler.setAdapter(adapter);
-        SnapHelper snapHelper = new PagerSnapHelper();
+        final SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(monthRecycler);
+        adapter = new CalendarRecyclerAdapter(context,months,selectedDates,shouldDecorate,decoratedDates,monthRecycler,snapHelper);
+        monthRecycler.setAdapter(adapter);
+
+
     }
 
     public void shouldDecorate(boolean shouldDecorate){
