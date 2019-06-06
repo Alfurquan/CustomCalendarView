@@ -22,6 +22,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         CustomCalendarView customCalendarView = findViewById(R.id.customCalendar);
         customCalendarView.shouldDecorate(false);
+        customCalendarView.setOnDateSelectedListener(new OnDateSelectedListener() {
+            @Override
+            public void onSelectedDate(ArrayList<Date> selectedDates) {
+                Log.d("msgDates", String.valueOf(selectedDates));
+            }
+        });
 
 
     }

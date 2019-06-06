@@ -2,12 +2,15 @@ package com.example.customcalendar.ManagerClasses;
 
 import android.content.Context;
 
+import com.example.customcalendar.interfaces.OnDateSelectedListener;
+
 import java.text.DateFormat;
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class CalendarManager {
 
@@ -106,8 +109,8 @@ public class CalendarManager {
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         return df.format(date);
     }
-    public ArrayList<Calendar> getAllMonthList(){
 
+    public ArrayList<Calendar> getAllMonthList(){
         ArrayList<Calendar> monthList = new ArrayList<>();
         Calendar calendar = Calendar.getInstance();
         Calendar current = (Calendar) calendar.clone();
@@ -123,4 +126,18 @@ public class CalendarManager {
 
         return monthList;
     }
+
+    public ArrayList<Date> getAllDateValuesInAMonth(Calendar displayedMonth){
+        ArrayList<Date> dayValueInCells = new ArrayList<Date>();
+        Calendar mCal = (Calendar)displayedMonth.clone();
+        mCal.set(Calendar.DAY_OF_MONTH, 1);
+        int firstDayOfTheMonth = mCal.get(Calendar.DAY_OF_WEEK) - 1;
+        mCal.add(Calendar.DAY_OF_MONTH, -firstDayOfTheMonth);
+        while(dayValueInCells.size() < 42){
+            dayValueInCells.add(mCal.getTime());
+            mCal.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        return dayValueInCells;
+    }
+
 }

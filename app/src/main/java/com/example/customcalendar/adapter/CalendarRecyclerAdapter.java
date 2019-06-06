@@ -5,20 +5,28 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.customcalendar.ManagerClasses.CalendarManager;
 import com.example.customcalendar.R;
+import com.example.customcalendar.interfaces.OnDateSelectedListener;
+import com.example.customcalendar.interfaces.OnMonthAndYearSelectedListener;
+import com.example.customcalendar.views.CustomMonthAndYearPickerDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class CalendarRecyclerAdapter extends RecyclerView.Adapter<CalendarRecyclerAdapter.MyCalendarViewHolder> {
@@ -31,6 +39,9 @@ public class CalendarRecyclerAdapter extends RecyclerView.Adapter<CalendarRecycl
     private boolean shouldDecorate;
     private CalendarGridAdapter adapter;
     private RecyclerView recyclerView;
+    private ArrayList<Date> dayValueInCells;
+    private CalendarManager calendarManager;
+    private OnDateSelectedListener onDateSelectedListener;
 
 
     public CalendarRecyclerAdapter(Context context, ArrayList<Calendar> months,ArrayList<Date> selectedDates,boolean shouldDecorate,ArrayList<Date> decoratedDates,RecyclerView recyclerView) {
@@ -40,13 +51,10 @@ public class CalendarRecyclerAdapter extends RecyclerView.Adapter<CalendarRecycl
         this.decoratedDates = decoratedDates;
         this.shouldDecorate = shouldDecorate;
         this.recyclerView = recyclerView;
+        dayValueInCells = new ArrayList<>();
+        calendarManager = new CalendarManager(context);
     }
 
-//    @Override
-//    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
-//        super.onAttachedToRecyclerView(recyclerView);
-//        recyclerView = recyclerView;
-//    }
 
     @NonNull
     @Override
@@ -62,12 +70,30 @@ public class CalendarRecyclerAdapter extends RecyclerView.Adapter<CalendarRecycl
         Calendar displayedMonth = months.get(position);
         String sDate = formatter.format(displayedMonth.getTime());
         holder.currentMonthTextView.setText(sDate);
-        setUpGridAdapter(displayedMonth,holder);
-        setUpClicks(holder,position);
 
+        Calendar calendar = (Calendar) displayedMonth.clone();
+        setUpGridAdapter(calendar,holder);
+        setUpClicks(holder,position,displayedMonth);
+        setUpGridClicks(calendar,holder);
     }
 
-    private void setUpClicks(MyCalendarViewHolder holder, final int position) {
+    private void setUpGridClicks(final Calendar displayedMonth, final MyCalendarViewHolder holder) {
+
+        holder.calendarGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                notifyDataSetChanged();
+                Date sel = adapter.getItem(position);
+                selectedDates.add(sel);
+                if(onDateSelectedListener!=null)
+                    onDateSelectedListener.onSelectedDate(selectedDates);
+//                setUpGridAdapter(displayedMonth,holder);
+                 notifyDataSetChanged();
+            }
+        });
+    }
+
+    private void setUpClicks(MyCalendarViewHolder holder, final int position, final Calendar displayedMonth) {
         holder.nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -81,21 +107,40 @@ public class CalendarRecyclerAdapter extends RecyclerView.Adapter<CalendarRecycl
                 recyclerView.smoothScrollToPosition(position - 1);
             }
         });
+
+        holder.currentMonthTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CustomMonthAndYearPickerDialog dialog = new CustomMonthAndYearPickerDialog();
+                FragmentTransaction ft = ((AppCompatActivity)context).getSupportFragmentManager().beginTransaction();
+                ft.addToBackStack(null);
+                dialog.show(ft, "dialog");
+
+                dialog.setOnMonthAndYearSelectedListener(new OnMonthAndYearSelectedListener() {
+                    @Override
+                    public void onMonthAndYearSelected(int month, int year) {
+                        Log.d("msgMy", String.valueOf(month));
+                        Log.d("msgMy", String.valueOf(year));
+                        goToMonthAndYear(month,year,displayedMonth);
+                    }
+                });
+            }
+        });
+    }
+
+    private void goToMonthAndYear(int month, int year, Calendar displayedMonth) {
+        Calendar calendar = (Calendar) displayedMonth.clone();
+        calendar.set(year,month,1);
+        LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+        int pos = months.indexOf(calendar);
+        Log.d("msg", String.valueOf(pos));
+        layoutManager.scrollToPositionWithOffset(pos,0);
     }
 
     private void setUpGridAdapter(Calendar displayedMonth, MyCalendarViewHolder holder) {
-        List<Date> dayValueInCells = new ArrayList<Date>();
-        Calendar mCal = (Calendar)displayedMonth.clone();
-        mCal.set(Calendar.DAY_OF_MONTH, 1);
-        int myMonth = mCal.get(Calendar.MONTH);
-        Log.d("Msg", String.valueOf(mCal.get(Calendar.DAY_OF_WEEK)));
-        int firstDayOfTheMonth = mCal.get(Calendar.DAY_OF_WEEK) - 1;
-        mCal.add(Calendar.DAY_OF_MONTH, -firstDayOfTheMonth);
-        while(dayValueInCells.size() < 42){
-            dayValueInCells.add(mCal.getTime());
-            mCal.add(Calendar.DAY_OF_MONTH, 1);
-        }
-        adapter = new CalendarGridAdapter(context,dayValueInCells,displayedMonth,selectedDates,shouldDecorate,decoratedDates);
+        Calendar calendar = (Calendar) displayedMonth.clone();
+        dayValueInCells = calendarManager.getAllDateValuesInAMonth(displayedMonth);
+        adapter = new CalendarGridAdapter(context,dayValueInCells,calendar,selectedDates,shouldDecorate,decoratedDates);
         holder.calendarGrid.setAdapter(adapter);
     }
 
@@ -116,5 +161,9 @@ public class CalendarRecyclerAdapter extends RecyclerView.Adapter<CalendarRecycl
             currentMonthTextView = view.findViewById(R.id.currentMonth);
             calendarGrid = view.findViewById(R.id.calendar_grid);
         }
+    }
+
+    public void setOnDateSelectedListener(OnDateSelectedListener onDateSelectedListener) {
+        this.onDateSelectedListener = onDateSelectedListener;
     }
 }

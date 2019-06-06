@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import com.example.customcalendar.ManagerClasses.CalendarManager;
 import com.example.customcalendar.R;
 import com.example.customcalendar.adapter.CalendarRecyclerAdapter;
+import com.example.customcalendar.interfaces.OnDateSelectedListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -76,5 +77,8 @@ public class CustomCalendarView extends LinearLayout {
         this.shouldDecorate = shouldDecorate;
         initializeUI();
         setUpRecycler();
+    }
+    public void setOnDateSelectedListener(OnDateSelectedListener onDateSelectedListener){
+            adapter.setOnDateSelectedListener(onDateSelectedListener);
     }
 }
