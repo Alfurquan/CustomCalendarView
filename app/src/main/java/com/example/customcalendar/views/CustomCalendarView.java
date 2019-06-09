@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.example.customcalendar.ManagerClasses.CalendarManager;
 import com.example.customcalendar.R;
@@ -33,6 +32,7 @@ public class CustomCalendarView extends LinearLayout {
     private boolean shouldDecorate;
     private ArrayList<Date> decoratedDates;
     private CalendarManager calendarManager;
+    public boolean isPicker;
     public CustomCalendarView(Context context) {
         super(context);
     }
@@ -58,6 +58,8 @@ public class CustomCalendarView extends LinearLayout {
         months = new ArrayList<>();
         selectedDates = new ArrayList<>();
         decoratedDates = new ArrayList<>();
+      //  isPicker = false;
+        shouldDecorate = false;
         Date date = calendarManager.getCurrentDateAsDate();
         selectedDates.add(date);
     }
@@ -71,7 +73,7 @@ public class CustomCalendarView extends LinearLayout {
         layoutManager.scrollToPositionWithOffset(pos,0);
         final SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(monthRecycler);
-        adapter = new CalendarRecyclerAdapter(context,months,selectedDates,shouldDecorate,decoratedDates,monthRecycler,snapHelper);
+        adapter = new CalendarRecyclerAdapter(context,months,selectedDates,shouldDecorate,decoratedDates,monthRecycler,snapHelper,isPicker);
         monthRecycler.setAdapter(adapter);
 
 
@@ -84,5 +86,15 @@ public class CustomCalendarView extends LinearLayout {
     }
     public void setOnDateSelectedListener(OnDateSelectedListener onDateSelectedListener){
             adapter.setOnDateSelectedListener(onDateSelectedListener);
+    }
+
+    public void setIsPicker(boolean isPicker){
+        this.isPicker = isPicker;
+        initializeUI();
+        setUpRecycler();
+    }
+
+    public ArrayList<Date> getSelectedDates() {
+        return adapter.getSelectedDates();
     }
 }

@@ -16,8 +16,7 @@ import android.widget.TextView;
 import com.example.customcalendar.ManagerClasses.CalendarManager;
 import com.example.customcalendar.R;
 import com.example.customcalendar.adapter.MonthGridAdapter;
-import com.example.customcalendar.adapter.YearPagerAdapter;
-import com.example.customcalendar.fragments.MonthFragment;
+import com.example.customcalendar.adapter.YearRecyclerAdapter;
 import com.example.customcalendar.fragments.YearFragment;
 import com.example.customcalendar.interfaces.OnMonthAndYearSelectedListener;
 import com.example.customcalendar.interfaces.OnMonthSelectedListener;
@@ -26,34 +25,35 @@ import com.example.customcalendar.interfaces.OnYearSelectedListener;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.viewpager.widget.ViewPager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.PagerSnapHelper;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SnapHelper;
 
 public class CustomMonthAndYearPickerDialog extends DialogFragment {
 
 
-   private CustomViewPager viewPager;
-   private YearPagerAdapter adapter;
+
    private MonthGridAdapter monthGridAdapter;
    private GridView monthGrid;
-   private YearFragment[] fragList = new YearFragment[3];
    private List<Integer> months;
    private Button btnDone,btnCancel;
    private OnMonthSelectedListener onMonthSelectedListener;
    private OnMonthAndYearSelectedListener onMonthAndYearSelectedListener;
    private View view;
-   private ArrayList<Integer> currentYears,prevYears,nextYears;
-   private Calendar currentYear = Calendar.getInstance(Locale.ENGLISH);
-   private int currentMonth,focusPage,selectedMonth;
+   private ArrayList<Integer> years;
+   private RecyclerView yearRecycler;
+   private YearRecyclerAdapter adapter;
+   private int currentMonth,selectedMonth,selectedYear;
     private ImageView nextButton,prevButton;
     private CalendarManager calendarManager;
     private TextView monthName,yearName;
+    private SnapHelper snapHelper;
+    int position;
 
     @Nullable
     @Override
@@ -63,17 +63,19 @@ public class CustomMonthAndYearPickerDialog extends DialogFragment {
         getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         initialization();
         setUpMonthGridAdapter();
-        setUpViewPager();
+        setUpRecycler();
+
         return view;
     }
 
     private void initialization() {
-        viewPager = view.findViewById(R.id.yearPager);
+
         monthGrid = view.findViewById(R.id.monthGrid);
         btnDone = view.findViewById(R.id.btnDone1);
         btnCancel = view.findViewById(R.id.btnCancel1);
         nextButton = view.findViewById(R.id.nextButton);
         prevButton = view.findViewById(R.id.prevButton);
+        yearRecycler = view.findViewById(R.id.yearRecycler);
         months = new ArrayList<>();
         calendarManager = new CalendarManager(getActivity());
         monthName = view.findViewById(R.id.monthName);
@@ -83,6 +85,31 @@ public class CustomMonthAndYearPickerDialog extends DialogFragment {
         setUpMonthGridClicks();
     }
 
+    private void setUpRecycler(){
+        years = calendarManager.getYearList();
+        int pos = calendarManager.posYear;
+        selectedYear = years.get(pos);
+        Log.d("msg", String.valueOf(pos));
+        adapter = new YearRecyclerAdapter(getActivity(),years,selectedYear);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        yearRecycler.setLayoutManager(layoutManager);
+        layoutManager.scrollToPositionWithOffset(pos,0);
+        yearRecycler.setAdapter(adapter);
+        snapHelper = new PagerSnapHelper();
+        snapHelper.attachToRecyclerView(yearRecycler);
+        yearRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if(newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    View centerView = snapHelper.findSnapView(recyclerView.getLayoutManager());
+                     position = yearRecycler.getLayoutManager().getPosition(centerView);
+
+                }
+            }
+        });
+    }
     private void setUpMonthGrid() {
         Calendar calendar = Calendar.getInstance();
         currentMonth = calendar.get(Calendar.MONTH);
@@ -95,53 +122,8 @@ public class CustomMonthAndYearPickerDialog extends DialogFragment {
         monthGridAdapter = new MonthGridAdapter(getActivity(),months,currentMonth,selectedMonth);
         monthGrid.setAdapter(monthGridAdapter);
     }
-    private void setUpViewPager() {
-        Calendar prevYearCalendar = Calendar.getInstance();
-        Calendar nextYearCalendar = Calendar.getInstance();
-        nextYearCalendar.add(Calendar.YEAR, 12);
-        prevYearCalendar.add(Calendar.YEAR, -12);
-        currentYears = calendarManager.getYearList(currentYear);
-        Log.d("msgCur", String.valueOf(currentYears));
-        fragList[1] = YearFragment.newInstance(currentYears);
-        prevYears = calendarManager.getYearList(prevYearCalendar);
-        Log.d("msgPrev", String.valueOf(prevYears));
-        fragList[0] = YearFragment.newInstance(prevYears);
-        nextYears = calendarManager.getYearList(nextYearCalendar);
-        Log.d("msgNext", String.valueOf(nextYears));
-        fragList[2] = YearFragment.newInstance(nextYears);
-        adapter = new YearPagerAdapter(getChildFragmentManager(), getActivity(), fragList);
-        viewPager.setAdapter(adapter);
-        viewPager.setCurrentItem(1, false);
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-            }
 
-            @Override
-            public void onPageSelected(int position) {
-
-                focusPage = position;
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-                if (state == ViewPager.SCROLL_STATE_IDLE) {
-                    if (focusPage < 1) {
-                        currentYear.add(Calendar.YEAR, -12);
-
-                    } else if (focusPage > 1) {
-
-                        currentYear.add(Calendar.YEAR, 12);
-                    }
-                    adapter.setYears(currentYear);
-                    viewPager.setCurrentItem(1, false);
-
-                }
-
-            }
-        });
-    }
 
         private void setUpMonthGridClicks() {
 
@@ -170,13 +152,13 @@ public class CustomMonthAndYearPickerDialog extends DialogFragment {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                viewPager.setCurrentItem(viewPager.getCurrentItem() + 1,true);
+//                yearRecycler.smoothScrollToPosition(position + 1);
             }
         });
         prevButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                viewPager.setCurrentItem(viewPager.getCurrentItem() - 1,true);
+//                yearRecycler.smoothScrollToPosition(position - 1);
             }
         });
 
@@ -190,7 +172,7 @@ public class CustomMonthAndYearPickerDialog extends DialogFragment {
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int selectedYear = YearFragment.selectedYear;
+                int selectedYear = adapter.getSelectedYear();
                 onMonthAndYearSelectedListener.onMonthAndYearSelected(selectedMonth,selectedYear);
                 dismiss();
             }
@@ -199,27 +181,13 @@ public class CustomMonthAndYearPickerDialog extends DialogFragment {
         monthName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-           //     replaceDialogFragment();
+
             }
         });
     }
 
-    private void replaceDialogFragment() {
-        closeDialogFragment();
-        SampleDialog sampleDialog = new SampleDialog();
-        sampleDialog.show(getActivity().getSupportFragmentManager(),"dialog");
-    }
 
-    private void closeDialogFragment() {
 
-        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-        Fragment fragmentToRemove = getActivity().getSupportFragmentManager().findFragmentByTag("dialog");
-        if (fragmentToRemove != null) {
-            ft.remove(fragmentToRemove);
-        }
-        ft.addToBackStack(null);
-        ft.commit(); //
-    }
 
     public void setOnMonthSelectedListener(OnMonthSelectedListener onMonthSelectedListener){
         this.onMonthSelectedListener = onMonthSelectedListener;

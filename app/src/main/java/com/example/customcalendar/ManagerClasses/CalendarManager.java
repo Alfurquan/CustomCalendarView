@@ -15,10 +15,21 @@ import java.util.List;
 public class CalendarManager {
 
     private Context context;
-    public int pos;
+    public int pos,posYear;
+    private Calendar minCalendar;
+    private Calendar maxCalendar;
+
 
     public CalendarManager(Context context) {
         this.context = context;
+        setUpMinAndMaxCalendar();
+    }
+
+    private void setUpMinAndMaxCalendar() {
+        minCalendar = Calendar.getInstance();
+        minCalendar.set(1900,0,1);
+        maxCalendar = Calendar.getInstance();
+        maxCalendar.set(2100,11,31);
     }
 
     public  String getMonthForInt(int num) {
@@ -95,6 +106,9 @@ public class CalendarManager {
         years.add(year);
         for(int i=1;i<12;i++){
            calendar.add(Calendar.YEAR,1);
+           if(calendar.compareTo(maxCalendar) > 0 || calendar.compareTo(minCalendar) < 0){
+               return years;
+           }
            year = calendar.get(Calendar.YEAR);
            years.add(year);
         }
@@ -110,12 +124,29 @@ public class CalendarManager {
         return df.format(date);
     }
 
+    public ArrayList<Integer> getYearList(){
+
+        ArrayList<Integer> yearList = new ArrayList<>();
+        Calendar calendar = Calendar.getInstance();
+        Calendar current = (Calendar) calendar.clone();
+        calendar.set(1900,0,1);
+        while(calendar.compareTo(maxCalendar) < 0){
+            yearList.add(calendar.get(Calendar.YEAR));
+            if(calendar.get(Calendar.YEAR) == current.get(Calendar.YEAR)){
+                posYear = yearList.indexOf(calendar.get(Calendar.YEAR));
+            }
+            calendar.add(Calendar.YEAR,1);
+            calendar = (Calendar) calendar.clone();
+        }
+        return yearList;
+    }
+
     public ArrayList<Calendar> getAllMonthList(){
         ArrayList<Calendar> monthList = new ArrayList<>();
         Calendar calendar = Calendar.getInstance();
         Calendar current = (Calendar) calendar.clone();
-        calendar.set(1970,0,1);
-        while(calendar.get(Calendar.YEAR ) != 2100){
+        calendar.set(1900,0,1);
+        while(calendar.compareTo(maxCalendar) < 0){
             monthList.add(calendar);
             if(calendar.get(Calendar.YEAR) == current.get(Calendar.YEAR) && calendar.get(Calendar.MONTH) == current.get(Calendar.MONTH)){
                 pos = monthList.indexOf(calendar);

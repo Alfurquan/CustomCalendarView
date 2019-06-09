@@ -47,11 +47,10 @@
         </LinearLayout>
 
 
-
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/calendarPager"
+        <com.example.customcalendar.views.CustomCalendarView
+            android:id="@+id/customCalendarView"
             android:layout_width="match_parent"
-            android:layout_height="400dp" />
+            android:layout_height="wrap_content"/>
 
         <LinearLayout
             android:orientation="horizontal"

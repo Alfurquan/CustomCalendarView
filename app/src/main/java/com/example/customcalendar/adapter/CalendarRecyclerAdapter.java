@@ -24,7 +24,6 @@ import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -44,9 +43,10 @@ public class CalendarRecyclerAdapter extends RecyclerView.Adapter<CalendarRecycl
     private CalendarManager calendarManager;
     private OnDateSelectedListener onDateSelectedListener;
     private SnapHelper snapHelper;
+    private boolean isPicker;
 
 
-    public CalendarRecyclerAdapter(Context context, ArrayList<Calendar> months, ArrayList<Date> selectedDates, boolean shouldDecorate, ArrayList<Date> decoratedDates, RecyclerView recyclerView, SnapHelper snapHelper) {
+    public CalendarRecyclerAdapter(Context context, ArrayList<Calendar> months, ArrayList<Date> selectedDates, boolean shouldDecorate, ArrayList<Date> decoratedDates, RecyclerView recyclerView, SnapHelper snapHelper,boolean isPicker) {
         this.context = context;
         this.months = months;
         this.selectedDates = selectedDates;
@@ -56,6 +56,7 @@ public class CalendarRecyclerAdapter extends RecyclerView.Adapter<CalendarRecycl
         dayValueInCells = new ArrayList<>();
         calendarManager = new CalendarManager(context);
         this.snapHelper = snapHelper;
+        this.isPicker = isPicker;
     }
 
 
@@ -68,13 +69,13 @@ public class CalendarRecyclerAdapter extends RecyclerView.Adapter<CalendarRecycl
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final MyCalendarViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final MyCalendarViewHolder holder, final int position) {
 
         final Calendar displayedMonth = months.get(position);
         String sDate = formatter.format(displayedMonth.getTime());
         holder.currentMonthTextView.setText(sDate);
 
-        Calendar calendar = (Calendar) displayedMonth.clone();
+        final Calendar calendar = (Calendar) displayedMonth.clone();
         setUpGridAdapter(calendar,holder);
         setUpClicks(holder,position,displayedMonth);
         setUpGridClicks(calendar,holder);
@@ -86,13 +87,13 @@ public class CalendarRecyclerAdapter extends RecyclerView.Adapter<CalendarRecycl
                 super.onScrollStateChanged(recyclerView, newState);
                 if(newState == RecyclerView.SCROLL_STATE_IDLE) {
                     View centerView = snapHelper.findSnapView(recyclerView.getLayoutManager());
-                    TextView st = centerView.findViewById(R.id.currentMonth);
-                    st.setTextColor(context.getResources().getColor(R.color.colorAccent));
+                    int pos = recyclerView.getLayoutManager().getPosition(centerView);
+                    Calendar month = months.get(pos);
                     GridView gridView = centerView.findViewById(R.id.calendar_grid);
-                    Calendar calendar = (Calendar) displayedMonth.clone();
-                    dayValueInCells = calendarManager.getAllDateValuesInAMonth(displayedMonth);
+                    Calendar calendar = (Calendar) month.clone();
+                    dayValueInCells = calendarManager.getAllDateValuesInAMonth(month);
                     adapter = new CalendarGridAdapter(context,dayValueInCells,calendar,selectedDates,shouldDecorate,decoratedDates);
-                   gridView.setAdapter(adapter);
+                    gridView.setAdapter(adapter);
                 }
             }
         });
@@ -105,9 +106,11 @@ public class CalendarRecyclerAdapter extends RecyclerView.Adapter<CalendarRecycl
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 Date sel = adapter.getItem(position);
                 selectedDates.add(sel);
-                if(onDateSelectedListener!=null)
-                    onDateSelectedListener.onSelectedDate(selectedDates);
-//                setUpGridAdapter(displayedMonth,holder);
+                if(!isPicker){
+                    if(onDateSelectedListener!=null)
+                        onDateSelectedListener.onSelectedDate(selectedDates);
+                }
+                //setUpGridAdapter(displayedMonth,holder);
                  notifyDataSetChanged();
             }
         });
@@ -124,26 +127,32 @@ public class CalendarRecyclerAdapter extends RecyclerView.Adapter<CalendarRecycl
         holder.prevBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                recyclerView.smoothScrollToPosition(position - 1);
+                if(position > 0){
+                    recyclerView.smoothScrollToPosition(position - 1);
+                }
             }
         });
 
         holder.currentMonthTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CustomMonthAndYearPickerDialog dialog = new CustomMonthAndYearPickerDialog();
-                FragmentTransaction ft = ((AppCompatActivity)context).getSupportFragmentManager().beginTransaction();
-                ft.addToBackStack(null);
-                dialog.show(ft, "dialog");
 
-                dialog.setOnMonthAndYearSelectedListener(new OnMonthAndYearSelectedListener() {
-                    @Override
-                    public void onMonthAndYearSelected(int month, int year) {
-                        Log.d("msgMy", String.valueOf(month));
-                        Log.d("msgMy", String.valueOf(year));
-                        goToMonthAndYear(month,year,displayedMonth);
-                    }
-                });
+                if(!isPicker){
+                    CustomMonthAndYearPickerDialog dialog = new CustomMonthAndYearPickerDialog();
+                    FragmentTransaction ft = ((AppCompatActivity)context).getSupportFragmentManager().beginTransaction();
+                    ft.addToBackStack(null);
+                    dialog.show(ft, "dialog");
+
+                    dialog.setOnMonthAndYearSelectedListener(new OnMonthAndYearSelectedListener() {
+                        @Override
+                        public void onMonthAndYearSelected(int month, int year) {
+                            Log.d("msgMy", String.valueOf(month));
+                            Log.d("msgMy", String.valueOf(year));
+                            goToMonthAndYear(month,year,displayedMonth);
+                        }
+                    });
+                }
+
             }
         });
     }
@@ -185,5 +194,9 @@ public class CalendarRecyclerAdapter extends RecyclerView.Adapter<CalendarRecycl
 
     public void setOnDateSelectedListener(OnDateSelectedListener onDateSelectedListener) {
         this.onDateSelectedListener = onDateSelectedListener;
+    }
+
+    public ArrayList<Date> getSelectedDates() {
+        return selectedDates;
     }
 }

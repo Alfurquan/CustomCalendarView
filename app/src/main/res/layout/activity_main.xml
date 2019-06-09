@@ -18,7 +18,21 @@
     <com.example.customcalendar.views.CustomCalendarView
         android:id="@+id/customCalendar"
         android:layout_width="match_parent"
+        android:visibility="visible"
         android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/open"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Open Picker"
+        android:textAllCaps="false"
+        android:textSize="20sp"
+        android:padding="10sp"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/white"
+        android:layout_gravity="center"
+        android:layout_marginTop="50sp"/>
 
 
 </LinearLayout>
